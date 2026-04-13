@@ -68,5 +68,28 @@ function insertBorrowers($firstname,$lastname,$email,$phone,$member_since,$is_ac
     }
 
   }
+
+  function viewBorroweruser(){
+    $con = $this->opencon();
+    return $con->query("SELECT * from Borrowers")->fetchAll();
+  }
+
+function insertBorroweraddress($borrower_id,$ba_house_number,$ba_street,$ba_barangay,$ba_city,$ba_province,$ba_postal_code,$is_primary){
+  $con = $this->opencon();
+
+  try{
+    $con->beginTransaction();
+    $stmt = $con->prepare('INSERT INTO borroweraddress(borrower_id,ba_house_number,ba_street,ba_barangay,ba_city,ba_province,ba_postal_code,is_primary) VALUES(?,?,?,?,?,?,?,?)');
+      $stmt->execute([$borrower_id,$ba_house_number,$ba_street,$ba_barangay,$ba_city,$ba_province,$ba_postal_code,$is_primary]);
+      $ba_id = $con->lastInsertId();
+      $con->commit();
+      return true;
+
+  } catch(PDOException $e){
+    if($con->inTransaction()){
+      $con->rollBack();
+  }
+}
+}
 }
 ?>
